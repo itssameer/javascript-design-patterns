@@ -57,7 +57,8 @@ class SizeSpecification {
   }
 }
 
-// Color and Size Speicification
+/**
+ / Color and Size Speicification
 class ColorAndSizeSpecification {
   constructor(color, size) {
     this.color = color;
@@ -78,6 +79,33 @@ class ColorOrSizeSpecification {
     return color === this.color || size === this.size;
   }
 }
+ */
+
+/**
+ * Using this type of specification class we can use Specification Aggrigator classes
+ */
+class AndSpecification {
+  constructor(...specs) {
+    this.specs = specs;
+  }
+
+  isSatisfied(item) {
+    return this.specs.every((x) => x.isSatisfied(item));
+  }
+}
+
+class OrSpecification {
+  constructor(...specs) {
+    this.specs = specs;
+  }
+
+  isSatisfied(item) {
+    return this.specs.some((x) => x.isSatisfied(item));
+  }
+}
+
+class XorSpecification {}
+//...
 
 const laptop = new Product("laptop", "red", "small");
 const mouse = new Product("mouse", "red", "small");
@@ -95,4 +123,23 @@ let bf = new BetterFilter();
 
 console.log("Green Product(new)");
 
-console.log(bf.filter(products, new ColorOrSizeSpecification("blue", "small")));
+// console.log(bf.filter(products, new ColorOrSizeSpecification("blue", "small")));
+console.log(
+  bf.filter(
+    products,
+    new AndSpecification(
+      new ColorSpecification("red"),
+      new SizeSpecification("small")
+    )
+  )
+);
+
+console.log(
+  bf.filter(
+    products,
+    new OrSpecification(
+      new ColorSpecification("red"),
+      new SizeSpecification("medium")
+    )
+  )
+);
